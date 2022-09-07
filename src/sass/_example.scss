@@ -26,3 +26,27 @@
   background-size: cover;
   background-position: center;
 }
+
+.container {
+  width: 100%;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: rgb(46, 20, 162);
+}
+
+.search-form {
+  position: relative;
+}
+
+input {
+  width: 20%;
+  height: 30px;
+  border-radius: 4px;
+}
+
+button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
