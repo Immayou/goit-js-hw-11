@@ -1,44 +1,64 @@
 import axios from "axios";
 import Notiflix from "notiflix";
-import { picturesRequest } from './dataRequest';
+import { dataRequest } from './dataRequest';
 
-const input = document.querySelector('#search-form')
-const inputBtn = document.querySelector('[type=submit]')
+const input = document.querySelector('[name="searchQuery"]')
+const galleryList = document.querySelector('.gallery')
+const formSubmitBtn = document.querySelector('#search-form')
 
-inputBtn.addEventListener('submit', onRanderPicturesBtn)
+formSubmitBtn.addEventListener('submit', onRanderDataRequestBtn)
 input.addEventListener('input', onKeyWordInput)
+
 let keyWordInput = ""
 
 function onKeyWordInput (evt) {
-evt.preventDefault()
-keyWordInput = evt.currentTarget.elements[0].value
-console.log(keyWordInput)
-getRequest(keyWordInput)
-
+  evt.preventDefault()
+  keyWordInput = evt.target.value
+  console.log(keyWordInput)
 }
 
-function onRanderPicturesBtn (evt) {
-
-console.log(1)
-// console.log(keyWordInput)
-// const dataPicturesRequest = await picturesRequest(keyWordInput)
-// console.log(dataPicturesRequest)
- 
-}
-
-
-
-function getRequest(keyValue) {
-    return axios.get(`https://pixabay.com/api/?key=29781267-a8728f24297a8bee7a02bc916&q=${keyWordInput}&image_type=photo&orientation=horizontal&safesearch=true`)
-    .then(response => {
-      if (!response.ok) {
-      throw new Error(response.status)}
-      return response.blob()})
-      .catch(function (error) {
-      console.log(error);
-      })
+async function onRanderDataRequestBtn (evt) {
+  evt.preventDefault()
+  clearHTML()
+  try {
+    const getDataRequest = await dataRequest(keyWordInput)
+    const picturesArray = await getDataRequest.hits
+    randerMarkupPicture(picturesArray)
+  } catch {
+    getDataFailureRequest()
   }
+}
+
+function randerMarkupPicture (pictures) {
+  const template = pictures.map(
+  ({webformatURL, largeImageURL, tags, likes, views, comments, downloads}) => 
+  {return `<div class="photo-card">
+  <img src="${webformatURL}" data-source="${largeImageURL}" alt="${tags}" loading="lazy" />
+  <div class="info">
+    <p class="info-item">
+      <b>Likes: ${likes}</b>
+    </p>
+    <p class="info-item">
+      <b>Views: ${views}</b>
+    </p>
+    <p class="info-item">
+      <b>Comments: ${comments}</b>
+    </p>
+    <p class="info-item">
+      <b>Downloads: ${downloads}</b>
+    </p>
+  </div>
+</div>`}).join('')
+galleryList.insertAdjacentHTML('beforeend', template)
+}
 
 
+function getDataFailureRequest () {
+  Notiflix.Notify.failure(
+    `Sorry, there are no images matching your ${keyWordInput}. Please try again.`
+  )
+}
 
-
+function clearHTML () {
+  galleryList.innerHTML = ''
+}

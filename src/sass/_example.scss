@@ -28,12 +28,7 @@
 }
 
 section {
-  background-color: beige;
-}
-
-.container {
-  padding-left: 15px;
-  padding-right: 15px;
+  background-color: rgb(233, 237, 238);
 }
 
 .pictures_header {
@@ -69,4 +64,11 @@ button {
   border: 1px;
   border-color: transparent;
   border-radius: 4px;
+  z-index: 5;
+
+  &:hover,
+  &:focus {
+  border-color:rgb(46, 20, 162)
+  }
 }
+
