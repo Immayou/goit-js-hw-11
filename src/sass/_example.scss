@@ -72,3 +72,12 @@ button {
   }
 }
 
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+}
+// .photo-card {
+  
+// }

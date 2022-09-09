@@ -24,7 +24,10 @@ async function onRanderDataRequestBtn (evt) {
   try {
     const getDataRequest = await dataRequest(keyWordInput)
     const picturesArray = await getDataRequest.hits
-    randerMarkupPicture(picturesArray)
+    if (picturesArray === []) {
+      getDataFailureRequest()
+    } else {
+    randerMarkupPicture(picturesArray)}
   } catch {
     getDataFailureRequest()
   }
