@@ -10,6 +10,7 @@ formSubmitBtn.addEventListener('submit', onRanderDataRequestBtn)
 input.addEventListener('input', onKeyWordInput)
 
 let keyWordInput = ""
+let page = 1
 
 function onKeyWordInput (evt) {
   evt.preventDefault()
