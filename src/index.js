@@ -7,28 +7,24 @@ const galleryList = document.querySelector('.gallery')
 const formSubmitBtn = document.querySelector('#search-form')
 
 formSubmitBtn.addEventListener('submit', onRanderDataRequestBtn)
-input.addEventListener('input', onKeyWordInput)
 
-let keyWordInput = ""
 let page = 1
-
-function onKeyWordInput (evt) {
-  evt.preventDefault()
-  keyWordInput = evt.target.value
-  console.log(keyWordInput)
-}
 
 async function onRanderDataRequestBtn (evt) {
   evt.preventDefault()
   clearHTML()
+  let keyWordInput = evt.currentTarget.elements.searchQuery.value
   try {
+    if (keyWordInput === '') {
+      throw new Error
+    }
     const getDataRequest = await dataRequest(keyWordInput)
     const picturesArray = await getDataRequest.hits
-    if (picturesArray === []) {
-      getDataFailureRequest()
-    } else {
-    randerMarkupPicture(picturesArray)}
-  } catch {
+    if (picturesArray.length === 0) {
+      throw new Error 
+    }
+    randerMarkupPicture(picturesArray)
+  } catch (error) {
     getDataFailureRequest()
   }
 }
