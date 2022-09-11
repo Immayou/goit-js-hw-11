@@ -8,7 +8,8 @@ import PicturesDataApiServise from './dataRequest';
 const galleryList = document.querySelector('.gallery')
 const formSubmit = document.querySelector('#search-form')
 const loadMoreBtn = document.querySelector('.load-more')
-const scrollBtn = document.querySelector('.scroll-btn')
+const scrollDownBtn = document.querySelector('.scroll-down-btn')
+const scrollUpBtn = document.querySelector('.scroll-up-btn')
 
 const PicturesDataApiServiseObj = new PicturesDataApiServise()
 
@@ -37,7 +38,8 @@ async function onRanderDataRequestBtn (evt) {
     getSuccesMessage(totalHitsQuantity)
     randerMarkupPicture(picturesArray)
     loadMoreBtn.classList.remove('visually_hidden')
-    scrollBtn.classList.remove('visually_hidden')
+    scrollDownBtn.classList.remove('visually_hidden')
+    scrollUpBtn.classList.remove('visually_hidden')
     gallery.on('show.simplelightbox')
   } catch (error) {
     getDataFailureRequest()
@@ -108,7 +110,7 @@ async function onLoadMore () {
   }
 }
 
-scrollBtn.addEventListener('click', (e) => {
+scrollDownBtn.addEventListener('click', (e) => {
   e.preventDefault();
 
   const { height: cardHeight } = document
@@ -117,6 +119,19 @@ scrollBtn.addEventListener('click', (e) => {
 
   window.scrollBy({
   top: cardHeight * 2,
+  behavior: "smooth",
+})
+})
+
+scrollUpBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+
+  const { height: cardHeight } = document
+  .querySelector(".gallery")
+  .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+  top: -(cardHeight * 2),
   behavior: "smooth",
 })
 })

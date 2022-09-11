@@ -129,12 +129,28 @@ img {
   overflow: hidden;
 }
 
-.scroll-btn {
+.scroll-up-btn {
 position: fixed;
-top: 50%;
+top: 33%;
 left: 95%;
 width: 35px;
 height: 35px;
 border-radius: 50%;
 background-color: rgb(46, 20, 162);
+}
+
+.scroll-down-btn {
+position: fixed;
+top: 66%;
+left: 95%;
+width: 35px;
+height: 35px;
+border-radius: 50%;
+background-color: rgb(46, 20, 162);
+}
+
+
+.scroll-down-btn:hover,
+.scroll-up-btn:hover {
+  background-color: #ffffff;
 }
