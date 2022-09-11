@@ -1,29 +1,27 @@
 import axios from "axios";
 import Notiflix from "notiflix";
-import { dataRequest } from './dataRequest';
+import PicturesDataApiServise, { dataRequest } from './dataRequest';
+import PicturesDataApiServise from './dataRequest';
 
 const input = document.querySelector('[name="searchQuery"]')
 const galleryList = document.querySelector('.gallery')
 const formSubmitBtn = document.querySelector('#search-form')
 
-formSubmitBtn.addEventListener('submit', onRanderDataRequestBtn)
+const PicturesDataApiServiseObj = new PicturesDataApiServise()
 
-let page = 1
+formSubmitBtn.addEventListener('submit', onRanderDataRequestBtn)
 
 async function onRanderDataRequestBtn (evt) {
   evt.preventDefault()
   clearHTML()
-  let keyWordInput = evt.currentTarget.elements.searchQuery.value
+  PicturesDataApiServiseObj.query = evt.currentTarget.elements.searchQuery.value
   try {
-    if (keyWordInput === '') {
-      throw new Error
-    }
-    const getDataRequest = await dataRequest(keyWordInput)
+    const getDataRequest = await PicturesDataApiServiseObj.request()
     const picturesArray = await getDataRequest.hits
+    randerMarkupPicture(picturesArray)
     if (picturesArray.length === 0) {
       throw new Error 
     }
-    randerMarkupPicture(picturesArray)
   } catch (error) {
     getDataFailureRequest()
   }
@@ -55,10 +53,14 @@ galleryList.insertAdjacentHTML('beforeend', template)
 
 function getDataFailureRequest () {
   Notiflix.Notify.failure(
-    `Sorry, there are no images matching your ${keyWordInput}. Please try again.`
+    `Sorry, there are no images matching your ${PicturesDataApiServise.query}. Please try again.`
   )
 }
 
 function clearHTML () {
   galleryList.innerHTML = ''
 }
+
+// const getDataRequest = PicturesDataApiServiseObj.request()
+// const picturesArray = getDataRequest.hits
+// console.log(picturesArray)
