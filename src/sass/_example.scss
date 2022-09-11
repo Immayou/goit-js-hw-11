@@ -64,12 +64,6 @@ input {
   border: 1px;
   border-color: transparent;
   border-radius: 4px;
-  z-index: 5;
-
-  &:hover,
-  &:focus {
-  border-color:rgb(46, 20, 162)
-  }
 }
 
 .submit-btn:hover {
