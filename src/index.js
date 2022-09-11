@@ -6,19 +6,27 @@ import PicturesDataApiServise from './dataRequest';
 const input = document.querySelector('[name="searchQuery"]')
 const galleryList = document.querySelector('.gallery')
 const formSubmitBtn = document.querySelector('#search-form')
+const loadMoreBtn = document.querySelector('.load-more')
 
 const PicturesDataApiServiseObj = new PicturesDataApiServise()
 
 formSubmitBtn.addEventListener('submit', onRanderDataRequestBtn)
+loadMoreBtn.addEventListener('click', onLoadMore)
 
 async function onRanderDataRequestBtn (evt) {
   evt.preventDefault()
   clearHTML()
+  loadMoreBtn.classList.add('visually_hidden')
   PicturesDataApiServiseObj.query = evt.currentTarget.elements.searchQuery.value
+  PicturesDataApiServiseObj.resetPage()
   try {
+    if (PicturesDataApiServiseObj.query.length === 0) {
+      throw new Error 
+    }
     const getDataRequest = await PicturesDataApiServiseObj.request()
     const picturesArray = await getDataRequest.hits
     randerMarkupPicture(picturesArray)
+    loadMoreBtn.classList.remove('visually_hidden')
     if (picturesArray.length === 0) {
       throw new Error 
     }
@@ -61,6 +69,9 @@ function clearHTML () {
   galleryList.innerHTML = ''
 }
 
-// const getDataRequest = PicturesDataApiServiseObj.request()
-// const picturesArray = getDataRequest.hits
-// console.log(picturesArray)
+
+async function onLoadMore () {
+  const getDataRequest = await PicturesDataApiServiseObj.request()
+  const picturesArray = await getDataRequest.hits
+  randerMarkupPicture(picturesArray)
+}

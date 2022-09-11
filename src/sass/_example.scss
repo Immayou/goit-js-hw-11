@@ -28,7 +28,7 @@
 }
 
 section {
-  background-color: rgb(233, 237, 238);
+  text-align: center;
 }
 
 .pictures_header {
@@ -55,7 +55,7 @@ input {
   border-color: transparent;
 }
 
-button {
+.submit-btn {
   position: absolute;
   top: 0;
   right: 0;
@@ -70,6 +70,10 @@ button {
   &:focus {
   border-color:rgb(46, 20, 162)
   }
+}
+
+.submit-btn:hover {
+border-color:rgb(46, 20, 162)
 }
 
 .gallery {
@@ -100,4 +104,33 @@ img {
 
 .info-item {
   text-align: center;
+}
+
+.load-more {
+  width: 80px;
+  height: 40px;
+  padding: 0;
+  color: #ffffff;
+  border: 1px;
+  border-color: transparent;
+  border-radius: 4px;
+  background-color: rgb(46, 20, 162);
+
+
+  &:hover {
+    border-color:#000000
+    }
+}
+
+.visually_hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  white-space: nowrap;
+  clip-path: inset(100%);
+  clip: rect(0 0 0 0);
+  overflow: hidden;
 }
