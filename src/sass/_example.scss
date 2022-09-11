@@ -128,3 +128,13 @@ img {
   clip: rect(0 0 0 0);
   overflow: hidden;
 }
+
+.scroll-btn {
+position: fixed;
+top: 50%;
+left: 95%;
+width: 35px;
+height: 35px;
+border-radius: 50%;
+background-color: rgb(46, 20, 162);
+}

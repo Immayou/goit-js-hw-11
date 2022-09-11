@@ -5,10 +5,10 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 import PicturesDataApiServise, { dataRequest } from './dataRequest';
 import PicturesDataApiServise from './dataRequest';
 
-const submitBtn = document.querySelector('.submit-btn')
 const galleryList = document.querySelector('.gallery')
 const formSubmit = document.querySelector('#search-form')
 const loadMoreBtn = document.querySelector('.load-more')
+const scrollBtn = document.querySelector('.scroll-btn')
 
 const PicturesDataApiServiseObj = new PicturesDataApiServise()
 
@@ -25,7 +25,7 @@ async function onRanderDataRequestBtn (evt) {
   PicturesDataApiServiseObj.resetPage()
   try {
     if (PicturesDataApiServiseObj.query.length === 0) {
-      getQueryToEnterMessage()
+      askQueryToEnterMessage()
       return
     }
     const getDataRequest = await PicturesDataApiServiseObj.request()
@@ -37,6 +37,7 @@ async function onRanderDataRequestBtn (evt) {
     getSuccesMessage(totalHitsQuantity)
     randerMarkupPicture(picturesArray)
     loadMoreBtn.classList.remove('visually_hidden')
+    scrollBtn.classList.remove('visually_hidden')
     gallery.on('show.simplelightbox')
   } catch (error) {
     getDataFailureRequest()
@@ -81,7 +82,7 @@ function getSuccesMessage (totalHits) {
   )
 }
 
-function getQueryToEnterMessage () {
+function askQueryToEnterMessage () {
   Notiflix.Notify.info(
     `Enter your query, please!`
   )
@@ -107,12 +108,15 @@ async function onLoadMore () {
   }
 }
 
-const { height: cardHeight } = document
+scrollBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+
+  const { height: cardHeight } = document
   .querySelector(".gallery")
   .firstElementChild.getBoundingClientRect();
 
-window.scrollBy({
+  window.scrollBy({
   top: cardHeight * 2,
   behavior: "smooth",
-});
-
+})
+})
