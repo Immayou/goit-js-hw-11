@@ -26,7 +26,7 @@ async function onRanderDataRequestBtn (evt) {
   PicturesDataApiServiseObj.resetPage()
   try {
     if (PicturesDataApiServiseObj.query.length === 0) {
-      askQueryToEnterMessage()
+      showAskingToEnterQueryMessage()
       return
     }
     const getDataRequest = await PicturesDataApiServiseObj.request()
@@ -35,15 +35,29 @@ async function onRanderDataRequestBtn (evt) {
     if (picturesArray.length === 0) {
       throw new Error 
       }
-    getSuccesMessage(totalHitsQuantity)
+    showSuccessMessage(totalHitsQuantity)
     randerMarkupPicture(picturesArray)
     loadMoreBtn.classList.remove('visually_hidden')
     scrollDownBtn.classList.remove('visually_hidden')
     scrollUpBtn.classList.remove('visually_hidden')
     gallery.on('show.simplelightbox')
+    if(picturesArray.includes(picturesArray[totalHitsQuantity-1])) {
+      loadMoreBtn.classList.add('visually_hidden')
+      scrollDownBtn.classList.add('visually_hidden')
+      scrollUpBtn.classList.add('visually_hidden')
+      showFinishedGalleryMessage()
+    }
+    // if (galleryList.scrollHeight - galleryList.scrollTop === galleryList.clientHeight) {
+    //   loadMoreBtn.classList.add('visually_hidden')
+    //   scrollDownBtn.classList.add('visually_hidden')
+    //   scrollUpBtn.classList.add('visually_hidden')
+    //   showFinishedGalleryMessage()
+    // }
   } catch (error) {
-    getDataFailureRequest()
+    showDataFailureRequestMessage()
     loadMoreBtn.classList.add('visually_hidden')
+    scrollDownBtn.classList.add('visually_hidden')
+    scrollUpBtn.classList.add('visually_hidden')
   }
 }
 
@@ -72,25 +86,25 @@ galleryList.insertAdjacentHTML('beforeend', template)
 gallery.refresh()
 }
 
-function getDataFailureRequest () {
+function showDataFailureRequestMessage () {
   Notiflix.Notify.failure(
     `Sorry, there are no images matching your ${PicturesDataApiServise.query}. Please try again.`
   )
 }
 
-function getSuccesMessage (totalHits) {
+function showSuccessMessage (totalHits) {
   Notiflix.Notify.success(
     `Hooray! We found ${totalHits} images.`
   )
 }
 
-function askQueryToEnterMessage () {
+function showAskingToEnterQueryMessage () {
   Notiflix.Notify.info(
-    `Enter your query, please!`
+    "Enter your query, please!"
   )
 }
 
-function getNoMorePicturesToShowMessage () {
+function showFinishedGalleryMessage () {
   Notiflix.Notify.info(
     "We're sorry, but you've reached the end of search results."
   )
@@ -102,12 +116,9 @@ function clearHTML () {
 
 async function onLoadMore () {
   const getDataRequest = await PicturesDataApiServiseObj.request()
+  const totalHitsQuantity = await getDataRequest.totalHits
   const picturesArray = await getDataRequest.hits
   randerMarkupPicture(picturesArray)
-  if (picturesArray.length === 0) {
-  loadMoreBtn.classList.add('visually_hidden')
-  getNoMorePicturesToShowMessage ()
-  }
 }
 
 scrollDownBtn.addEventListener('click', (e) => {
@@ -135,3 +146,5 @@ scrollUpBtn.addEventListener('click', (e) => {
   behavior: "smooth",
 })
 })
+
+
