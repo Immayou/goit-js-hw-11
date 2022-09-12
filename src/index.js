@@ -2,7 +2,6 @@ import axios from "axios";
 import Notiflix from "notiflix";
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
-import PicturesDataApiServise, { dataRequest } from './dataRequest';
 import PicturesDataApiServise from './dataRequest';
 
 const galleryList = document.querySelector('.gallery')
@@ -24,9 +23,11 @@ async function onRanderDataRequestBtn (evt) {
   loadMoreBtn.classList.add('visually_hidden')
   PicturesDataApiServiseObj.query = evt.currentTarget.elements.searchQuery.value
   PicturesDataApiServiseObj.resetPage()
+  
   try {
     if (PicturesDataApiServiseObj.query.length === 0) {
       showAskingToEnterQueryMessage()
+      hideAllBtns()
       return
     }
     const getDataRequest = await PicturesDataApiServiseObj.request()
@@ -37,27 +38,14 @@ async function onRanderDataRequestBtn (evt) {
       }
     showSuccessMessage(totalHitsQuantity)
     randerMarkupPicture(picturesArray)
-    loadMoreBtn.classList.remove('visually_hidden')
-    scrollDownBtn.classList.remove('visually_hidden')
-    scrollUpBtn.classList.remove('visually_hidden')
+    // showAllBtns()
     gallery.on('show.simplelightbox')
     if(picturesArray.includes(picturesArray[totalHitsQuantity-1])) {
-      loadMoreBtn.classList.add('visually_hidden')
-      scrollDownBtn.classList.add('visually_hidden')
-      scrollUpBtn.classList.add('visually_hidden')
-      showFinishedGalleryMessage()
+      hideAllBtns()
     }
-    // if (galleryList.scrollHeight - galleryList.scrollTop === galleryList.clientHeight) {
-    //   loadMoreBtn.classList.add('visually_hidden')
-    //   scrollDownBtn.classList.add('visually_hidden')
-    //   scrollUpBtn.classList.add('visually_hidden')
-    //   showFinishedGalleryMessage()
-    // }
   } catch (error) {
     showDataFailureRequestMessage()
-    loadMoreBtn.classList.add('visually_hidden')
-    scrollDownBtn.classList.add('visually_hidden')
-    scrollUpBtn.classList.add('visually_hidden')
+    hideAllBtns()
   }
 }
 
@@ -114,9 +102,20 @@ function clearHTML () {
   galleryList.innerHTML = ''
 }
 
+function showAllBtns () {
+  loadMoreBtn.classList.remove('visually_hidden')
+  scrollDownBtn.classList.remove('visually_hidden')
+  scrollUpBtn.classList.remove('visually_hidden')
+}
+
+function hideAllBtns () {
+  loadMoreBtn.classList.add('visually_hidden')
+  scrollDownBtn.classList.add('visually_hidden')
+  scrollUpBtn.classList.add('visually_hidden')
+}
+
 async function onLoadMore () {
   const getDataRequest = await PicturesDataApiServiseObj.request()
-  const totalHitsQuantity = await getDataRequest.totalHits
   const picturesArray = await getDataRequest.hits
   randerMarkupPicture(picturesArray)
 }
@@ -147,4 +146,24 @@ scrollUpBtn.addEventListener('click', (e) => {
 })
 })
 
+window.addEventListener("scroll", function(){
+           
+ let counter = 1;
+ let contentHeight = galleryList.offsetHeight; 
+ let yOffset = window.pageYOffset;   
+ let windowHeight = window.innerHeight; 
+ let y = yOffset + windowHeight;
+ 
+  if(y >= contentHeight) {
+     //загружаем новое содержимое в элемент
+     galleryList.innerHTML = galleryList.innerHTML + onRanderDataRequestBtn()
+  }
+});
 
+
+// if (galleryList.scrollHeight - galleryList.scrollTop === galleryList.clientHeight) {
+    //   loadMoreBtn.classList.add('visually_hidden')
+    //   scrollDownBtn.classList.add('visually_hidden')
+    //   scrollUpBtn.classList.add('visually_hidden')
+    //   showFinishedGalleryMessage()
+    // }

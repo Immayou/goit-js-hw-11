@@ -3,22 +3,29 @@ export default class PicturesDataApiServise {
     constructor () {
         this.searchQuery = '';
         this.page = 1;
+        this.isLoading = false;
     }
 
     async request () {
         const response = await axios.get(`https://pixabay.com/api/?key=29781267-a8728f24297a8bee7a02bc916&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${this.page}`);
         this.incrementPage();
+        this.isLoading = true;
         return response.data;
     } 
+    
     incrementPage() {
         this.page += 1; 
+    }
+    
+    resetLoading () {
+        this.isLoading = false;
     }
 
     resetPage() {
         this.page = 1;
     }
 
-    get query () {
+       get query () {
         return this.searchQuery;
     }
 
