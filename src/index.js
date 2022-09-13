@@ -40,6 +40,7 @@ async function onRanderDataRequestBtn (evt) {
     randerMarkupPicture(picturesArray)
     showAllBtns()
     gallery.on('show.simplelightbox')
+    checkNextDataRequest()
     // if(picturesArray.includes(picturesArray[totalHitsQuantity-1])) {
     //   hideAllBtns()
     // }
@@ -76,26 +77,22 @@ gallery.refresh()
 
 function showDataFailureRequestMessage () {
   Notiflix.Notify.failure(
-    `Sorry, there are no images matching your ${PicturesDataApiServise.query}. Please try again.`
-  )
+    `Sorry, there are no images matching your ${PicturesDataApiServise.query}. Please try again.`)
 }
 
 function showSuccessMessage (totalHits) {
   Notiflix.Notify.success(
-    `Hooray! We found ${totalHits} images.`
-  )
+    `Hooray! We found ${totalHits} images.`)
 }
 
 function showAskingToEnterQueryMessage () {
   Notiflix.Notify.info(
-    "Enter your query, please!"
-  )
+    "Enter your query, please!")
 }
 
 function showFinishedGalleryMessage () {
   Notiflix.Notify.info(
-    "We're sorry, but you've reached the end of search results."
-  )
+    "We're sorry, but you've reached the end of search results.")
 }
 
 function clearHTML () {
@@ -117,10 +114,8 @@ function hideAllBtns () {
 async function onLoadMore () {
   const getDataRequest = await PicturesDataApiServiseObj.request()
   const picturesArray = await getDataRequest.hits
-  randerMarkupPicture(picturesArray)
-  if (picturesArray.length) {
-    console.log(1)
-  }
+    randerMarkupPicture(picturesArray)
+    checkNextDataRequest()
 }
 
 scrollDownBtn.addEventListener('click', (e) => {
@@ -149,18 +144,37 @@ scrollUpBtn.addEventListener('click', (e) => {
 })
 })
 
-// window.addEventListener("scroll", function onLoadMorePicturesScroll () {
-           
-//  let counter = 1;
-//  let contentHeight = galleryList.offsetHeight; 
-//  let yOffset = window.pageYOffset;   
-//  let windowHeight = window.innerHeight; 
-//  let y = yOffset + windowHeight;
+async function checkNextDataRequest () {
+  const isEmptyNextDataRequest = await PicturesDataApiServiseObj.nextRequest()
+    console.log(isEmptyNextDataRequest)
+    const picturesNextArray = await isEmptyNextDataRequest.hits
+    if (picturesNextArray.length < 1) {
+      window.addEventListener("scroll", function onLoadMorePicturesScroll () {
+        let contentHeight = galleryList.offsetHeight; 
+        let yOffset = window.pageYOffset;   
+        let windowHeight = window.innerHeight; 
+        let y = yOffset + windowHeight;
+        
+        if(y >= contentHeight) {
+        showFinishedGalleryMessage () 
+        hideAllBtns()
+        loadMoreBtn.removeEventListener('click', onLoadMore)
+        window.removeEventListener('scroll', onLoadMorePicturesScroll)
+        };
+        })
+}
+}
 
-//   if(y >= contentHeight) {
-//     showFinishedGalleryMessage () 
-//     hideAllBtns()
-//     window.removeEventListener('scroll', onLoadMorePicturesScroll)
-//   };
+// window.addEventListener("scroll", function onLoadMorePicturesScroll () {
+// let contentHeight = galleryList.offsetHeight; 
+// let yOffset = window.pageYOffset;   
+// let windowHeight = window.innerHeight; 
+// let y = yOffset + windowHeight;
+
+// if(y >= contentHeight) {
+// showFinishedGalleryMessage () 
+// hideAllBtns()
+// window.removeEventListener('scroll', onLoadMorePicturesScroll)
+// };
 // });
 
