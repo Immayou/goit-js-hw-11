@@ -25,11 +25,18 @@ export default class PicturesDataApiServise {
         return responseNextRequest;
     }
 
+    async getTotalDataValue() {
+        const response = await this.request();
+        this.decrementPage();
+        const totalDataValue = await response.totalHits;
+        return totalDataValue;
+    }
+
     resetPage() {
         this.page = 1;
     }
 
-       get query () {
+    get query () {
         return this.searchQuery;
     }
 

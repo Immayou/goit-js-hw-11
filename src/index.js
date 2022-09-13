@@ -41,9 +41,6 @@ async function onRanderDataRequestBtn (evt) {
     showAllBtns()
     gallery.on('show.simplelightbox')
     checkNextDataRequest()
-    // if(picturesArray.includes(picturesArray[totalHitsQuantity-1])) {
-    //   hideAllBtns()
-    // }
   } catch (error) {
     showDataFailureRequestMessage()
     hideAllBtns()
@@ -58,16 +55,20 @@ function randerMarkupPicture (pictures) {
   <img src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
   <div class="info">
     <p class="info-item">
-      <b>Likes: ${likes}</b>
+      <b>Likes:</b>
+      <span class="info-item-value">${likes}</span>
     </p>
     <p class="info-item">
-      <b>Views: ${views}</b>
+      <b>Views:</b>
+      <span class="info-item-value">${views}</span>
     </p>
     <p class="info-item">
-      <b>Comments: ${comments}</b>
+      <b>Comments:</b>
+      <span class="info-item-value">${comments}</span>
     </p>
     <p class="info-item">
-      <b>Downloads: ${downloads}</b>
+      <b>Downloads:</b>
+      <span class="info-item-value">${downloads}</span>
     </p>
   </div>
 </div>`}).join('')
@@ -146,9 +147,10 @@ scrollUpBtn.addEventListener('click', (e) => {
 
 async function checkNextDataRequest () {
   const isEmptyNextDataRequest = await PicturesDataApiServiseObj.nextRequest()
-    console.log(isEmptyNextDataRequest)
-    const picturesNextArray = await isEmptyNextDataRequest.hits
-    if (picturesNextArray.length < 1) {
+  const picturesNextArray = await isEmptyNextDataRequest.hits
+  const totalHitsQuantity = await picturesNextArray.totalHits
+  console.log(picturesNextArray)
+    if (picturesNextArray.length < 1 || totalHitsQuantity === 500) {
       window.addEventListener("scroll", function onLoadMorePicturesScroll () {
         let contentHeight = galleryList.offsetHeight; 
         let yOffset = window.pageYOffset;   
@@ -158,23 +160,10 @@ async function checkNextDataRequest () {
         if(y >= contentHeight) {
         showFinishedGalleryMessage () 
         hideAllBtns()
-        loadMoreBtn.removeEventListener('click', onLoadMore)
         window.removeEventListener('scroll', onLoadMorePicturesScroll)
         };
         })
 }
 }
 
-// window.addEventListener("scroll", function onLoadMorePicturesScroll () {
-// let contentHeight = galleryList.offsetHeight; 
-// let yOffset = window.pageYOffset;   
-// let windowHeight = window.innerHeight; 
-// let y = yOffset + windowHeight;
-
-// if(y >= contentHeight) {
-// showFinishedGalleryMessage () 
-// hideAllBtns()
-// window.removeEventListener('scroll', onLoadMorePicturesScroll)
-// };
-// });
 
