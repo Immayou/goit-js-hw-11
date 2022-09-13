@@ -38,7 +38,7 @@ async function onRanderDataRequestBtn (evt) {
       }
     showSuccessMessage(totalHitsQuantity)
     randerMarkupPicture(picturesArray)
-    // showAllBtns()
+    showAllBtns()
     gallery.on('show.simplelightbox')
     if(picturesArray.includes(picturesArray[totalHitsQuantity-1])) {
       hideAllBtns()
@@ -146,7 +146,7 @@ scrollUpBtn.addEventListener('click', (e) => {
 })
 })
 
-window.addEventListener("scroll", function(){
+window.addEventListener("scroll", function onLoadMorePicturesScroll () {
            
  let counter = 1;
  let contentHeight = galleryList.offsetHeight; 
@@ -155,15 +155,10 @@ window.addEventListener("scroll", function(){
  let y = yOffset + windowHeight;
  
   if(y >= contentHeight) {
-     //загружаем новое содержимое в элемент
-     galleryList.innerHTML = galleryList.innerHTML + onRanderDataRequestBtn()
+    onLoadMore()
+    showFinishedGalleryMessage () 
+    hideAllBtns()
+    window.removeEventListener('scroll', onLoadMorePicturesScroll)
   }
 });
 
-
-// if (galleryList.scrollHeight - galleryList.scrollTop === galleryList.clientHeight) {
-    //   loadMoreBtn.classList.add('visually_hidden')
-    //   scrollDownBtn.classList.add('visually_hidden')
-    //   scrollUpBtn.classList.add('visually_hidden')
-    //   showFinishedGalleryMessage()
-    // }
