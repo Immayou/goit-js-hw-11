@@ -4,6 +4,7 @@ import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 import PicturesDataApiServise from './dataRequest';
 
+const btn = document.querySelector('submit-btn')
 const galleryList = document.querySelector('.gallery')
 const formSubmit = document.querySelector('#search-form')
 const loadMoreBtn = document.querySelector('.load-more')
@@ -31,12 +32,12 @@ async function onRanderDataRequestBtn (evt) {
       return
     }
     const getDataRequest = await PicturesDataApiServiseObj.request()
-    const totalHitsQuantity = await getDataRequest.totalHits
+    const allPictures = await getDataRequest.totalHits
     const picturesArray = await getDataRequest.hits
     if (picturesArray.length === 0) {
       throw new Error 
       }
-    showSuccessMessage(totalHitsQuantity)
+    showSuccessMessage(allPictures)
     randerMarkupPicture(picturesArray)
     showAllBtns()
     checkNextDataRequest()
@@ -76,6 +77,25 @@ galleryList.insertAdjacentHTML('beforeend', template)
 gallery.refresh()
 }
 
+async function onLoadMore () {
+  const getDataRequest = await PicturesDataApiServiseObj.request()
+  const picturesArray = await getDataRequest.hits
+    randerMarkupPicture(picturesArray)
+    checkNextDataRequest()
+}
+
+async function checkNextDataRequest () {
+  try {
+  const nextDataRequest = await PicturesDataApiServiseObj.nextRequest()
+  const picturesNextDataRequest = await nextDataRequest.hits
+  if (picturesNextDataRequest.length < 1) {
+     throw new Error;
+}
+  } catch (error) {
+    window.addEventListener("scroll", onFinishedPicturesScroll)
+  }
+}
+
 function showDataFailureRequestMessage () {
   Notiflix.Notify.failure(
     `Sorry, there are no images matching your ${PicturesDataApiServise.query}. Please try again.`)
@@ -112,13 +132,6 @@ function hideAllBtns () {
   scrollUpBtn.classList.add('visually_hidden')
 }
 
-async function onLoadMore () {
-  const getDataRequest = await PicturesDataApiServiseObj.request()
-  const picturesArray = await getDataRequest.hits
-    randerMarkupPicture(picturesArray)
-    checkNextDataRequest()
-}
-
 scrollDownBtn.addEventListener('click', (e) => {
   e.preventDefault();
 
@@ -144,20 +157,9 @@ scrollUpBtn.addEventListener('click', (e) => {
   behavior: "smooth",
 })
 })
-
-async function checkNextDataRequest () {
-  try {
-  const nextDataRequest = await PicturesDataApiServiseObj.nextRequest()
-  const picturesNextDataRequest = await nextDataRequest.hits
-  if (picturesNextDataRequest.length < 1) {
-     throw new Error;
-}
-  } catch (error) {
-    window.addEventListener("scroll", onFinishedPicturesScroll)
-  }
-}
  
-function onFinishedPicturesScroll () {
+function onFinishedPicturesScroll (e) {
+  e.preventDefault();
   let contentHeight = galleryList.offsetHeight; 
   let yOffset = window.pageYOffset;   
   let windowHeight = window.innerHeight; 
