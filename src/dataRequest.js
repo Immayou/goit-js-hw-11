@@ -15,16 +15,6 @@ export default class PicturesDataApiServise {
         this.page += 1; 
     }
     
-    decrementPage() {
-        this.page -= 1; 
-    }
-    
-    async nextRequest() {
-        const responseNextRequest = await this.request();
-        this.decrementPage();
-        return responseNextRequest;
-    }
-
     resetPage() {
         this.page = 1;
     }

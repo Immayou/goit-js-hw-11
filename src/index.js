@@ -10,11 +10,6 @@ const loadMoreBtn = document.querySelector('.load-more')
 const scrollDownBtn = document.querySelector('.scroll-down-btn')
 const scrollUpBtn = document.querySelector('.scroll-up-btn')
 
-let contentHeight = galleryList.offsetHeight; //висота галереї
-let yOffset = window.pageYOffset;   //кількість пікселів, на які прокручено документ
-let windowHeight = window.innerHeight; // висота області перегляду вікна браузера
-let y = yOffset + windowHeight; // висота прокрутки плюс висота видимості
-
 const picturesDataApiServiseObj = new PicturesDataApiServise()
 
 formSubmit.addEventListener('submit', onRanderDataRequestBtn)
@@ -36,15 +31,17 @@ async function onRanderDataRequestBtn (evt) {
       return
     }
     const getDataRequest = await picturesDataApiServiseObj.request()
-    const allPictures = await getDataRequest.totalHits
+    const allPicturesQuantity = await getDataRequest.totalHits
     const picturesArray = await getDataRequest.hits
     if (picturesArray.length === 0) {
       throw new Error 
       }
-    showSuccessMessage(allPictures)
-    randerMarkupPicture(picturesArray)
+    showSuccessMessage(allPicturesQuantity)
+    renderMarkupPicture(picturesArray)
     showAllBtns()
-    // finishedPicturesScroll()
+    if (galleryList.children.length === allPicturesQuantity) {
+    onFinishingRenderPictures()
+    }
     gallery.on('show.simplelightbox')
   } catch (error) {
     showDataFailureRequestMessage()
@@ -52,7 +49,7 @@ async function onRanderDataRequestBtn (evt) {
   }
 }
 
-function randerMarkupPicture (pictures) {
+function renderMarkupPicture (pictures) {
   const template = pictures.map(
   ({webformatURL, largeImageURL, tags, likes, views, comments, downloads}) => 
   {return `<div class="photo-card">
@@ -82,22 +79,18 @@ gallery.refresh()
 }
 
 async function onLoadMore () {
-  const getDataRequest = await picturesDataApiServiseObj.request()
-  const picturesArray = await getDataRequest.hits
-  randerMarkupPicture(picturesArray)
-}
-
-// async function checkNextDataRequest () {
-//   try {
-//   const nextDataRequest = await PicturesDataApiServiseObj.nextRequest()
-//   const picturesNextDataRequest = await nextDataRequest.hits
-//   if (picturesNextDataRequest.length < 1) {
-//      throw new Error;
-// }
-//   } catch (error) {
-//     window.addEventListener("scroll", onFinishedPicturesScroll)
-//   }
-// }
+  try {
+    const getDataRequest = await picturesDataApiServiseObj.request()
+    const allPicturesQuantity = await getDataRequest.totalHits
+    const picturesArray = await getDataRequest.hits
+    renderMarkupPicture(picturesArray)
+    if (galleryList.children.length === allPicturesQuantity || galleryList.children.length >= 500) {
+       throw new Error;
+  }
+    } catch (error) {
+      window.addEventListener("scroll", onFinishingRenderPictures)
+    }
+  }
 
 function showDataFailureRequestMessage () {
   Notiflix.Notify.failure(
@@ -161,14 +154,15 @@ scrollUpBtn.addEventListener('click', (e) => {
 })
 })
  
-function finishedPicturesScroll () {
-  // let contentHeight = galleryList.offsetHeight; //висота галереї
-  // let yOffset = window.pageYOffset;   //кількість пікселів, на які прокручено документ
-  // let windowHeight = window.innerHeight; // висота області перегляду вікна браузера
-  // let y = yOffset + windowHeight; // висота прокрутки плюс висота видимості
-f
-  if(y >= contentHeight) {
+function onFinishingRenderPictures () {
+  let contentHeight = galleryList.offsetHeight; //висота галереї
+  let yOffset = window.pageYOffset;   //кількість пікселів, на які прокручено документ
+  let windowHeight = window.innerHeight; // висота області перегляду вікна браузера
+  let y = yOffset + windowHeight; // висота прокрутки плюс висота видимості
+
+  if(y >= contentHeight || galleryList.children.length <= 40) {
   showFinishedGalleryMessage () 
   hideAllBtns()
+  window.removeEventListener("scroll", onFinishingRenderPictures)
   }
   }
